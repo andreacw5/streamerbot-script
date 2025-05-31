@@ -19,66 +19,91 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 400px;
-      height: 250px;
       display: none;
-      flex-direction: column;
+      z-index: 1000;
+    }
+
+    .notification-card {
+      display: flex;
       align-items: center;
-      text-align: center;
-      gap: 20px;
+      gap: 32px;
+      background: rgba(34, 40, 49, 0.85);
+      border-radius: 36px;
+      box-shadow: 0 8px 40px 0 rgba(80, 150, 255, 0.25);
+      padding: 36px 48px;
+      border: 2.5px solid #ff3b3f;
+      min-width: 420px;
+      animation: cardPopIn 0.7s cubic-bezier(.23, 1.02, .32, 1) forwards;
     }
 
-    .notification-icons {
-      position: relative;
-      width: 150px;
-      height: 150px;
-    }
-
-    .icon,
-    .profile-icon {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: url('https://andreacw5.github.io/streamerbot-script/assets/media/twitch_logo_2.png') no-repeat center center;
-      background-size: cover;
-      animation: orbit 8s linear infinite;
-      box-shadow: 0 0 15px 5px rgba(95, 168, 255, 0.6);
-    }
-
-    .profile-icon {
-      animation-delay: -4s;
-    }
-
-    @keyframes orbit {
+    @keyframes cardPopIn {
       0% {
-        transform: rotate(0deg) translateX(60px) rotate(0deg);
+        opacity: 0;
+        transform: scale(0.85) translateY(40px);
+        filter: blur(8px);
       }
 
       100% {
-        transform: rotate(360deg) translateX(60px) rotate(-360deg);
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0);
       }
     }
 
-    .notification-content {
-      text-align: center;
-      color: #dcdcdc;
+    .avatar-wrapper {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      flex-shrink: 0;
+    }
+
+    .profile-avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: #222;
+      background-size: cover;
+      background-position: center;
+      border: 4px solid #ff3b3f;
+      box-shadow: 0 0 24px 0 #ff3b3fbb;
+    }
+
+    .twitch-badge {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #9147ff url('https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png') no-repeat center center;
+      background-size: 60%;
+      border: 3px solid #fff;
+      box-shadow: 0 2px 8px #9147ff99;
+    }
+
+    .notification-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
     }
 
     .notification-title {
-      font-size: 28px;
-      font-weight: bold;
+      font-size: 2.2rem;
+      font-weight: 800;
       margin: 0;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+      color: #ff3b3f;
+      letter-spacing: 1px;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      text-shadow: 0 2px 12px #0008;
     }
 
     .notification-text {
-      font-size: 20px;
-      color: white;
+      font-size: 1.3rem;
+      color: #ffffff;
       margin: 0;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      text-shadow: 0 1px 4px #0006;
     }
 
     @keyframes fadeIn {
@@ -109,13 +134,15 @@
 
 <body>
   <div id="notification" class="notification-container">
-    <div class="notification-icons">
-      <div class="icon"></div>
-      <div class="profile-icon"></div>
-    </div>
-    <div class="notification-content">
-      <p class="notification-title" id="notification-title"></p>
-      <p class="notification-text" id="notification-text">Benvenuto/a!</p>
+    <div class="notification-card">
+      <div class="avatar-wrapper">
+        <div class="profile-avatar"></div>
+        <div class="twitch-badge"></div>
+      </div>
+      <div class="notification-info">
+        <p class="notification-title" id="notification-title"></p>
+        <p class="notification-text" id="notification-text">Benvenuto/a!</p>
+      </div>
     </div>
   </div>
 
@@ -205,14 +232,14 @@
     function showNotification(displayName, avatarUrl, color) {
       return new Promise((resolve) => {
         const notification = document.getElementById('notification');
-        const icon = document.querySelector('.icon');
-        const profileIcon = document.querySelector('.profile-icon');
         const title = document.getElementById('notification-title');
         const text = document.getElementById('notification-text');
+        const profileAvatar = document.querySelector('.profile-avatar');
+        const twitchBadge = document.querySelector('.twitch-badge');
 
         title.innerText = displayName;
-        title.style.color = color;
-        profileIcon.style.backgroundImage = `url(${avatarUrl})`;
+        title.style.color = color || '#ff3b3f';
+        profileAvatar.style.backgroundImage = `url(${avatarUrl})`;
 
         const audio = getAudio();
         audio.play();
